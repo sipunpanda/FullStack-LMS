@@ -3,8 +3,14 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import morgan from 'morgan';
 
+import userRoutes from './routes/user.routes.js'
+import errorMiddleware from './middlewares/error.middleware.js';
+
+
 
 const app = express();
+
+app.use(express.json());
 
 app.use(cookieParser());
 app.use(cors({
@@ -25,14 +31,17 @@ app.use('/ping', (req, res) => {
     )
 })
 
+app.use('/api/v1/user', userRoutes)
 
-app.all('*', (req, res) => {
+app.all('*', (req, res,next) => {
     res.status(404).json(
         {
-            error: "Page Not Found"
+            error: "Page Not Found..."
         }
     )
 })
+
+app.use(errorMiddleware)
 
 
 
