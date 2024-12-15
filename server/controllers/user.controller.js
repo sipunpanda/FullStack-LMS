@@ -11,7 +11,8 @@ const cookieOptions = {
 
 const register = async (req, res, next) => {
     const { fullName, email, password } = req.body;
-    
+  
+
 
     if (!fullName || !email || !password) {
         return next(new AppError('All fields are required', 400))
@@ -50,6 +51,7 @@ const register = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
+    console.log("login successful");
 
     try {
         const { email, password } = req.body;
@@ -62,6 +64,7 @@ const login = async (req, res, next) => {
         }
 
         user.password = undefined;
+        
 
         const token = await user.generateJWTToken();
         res.cookie("token", token, cookieOptions);

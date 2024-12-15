@@ -6,7 +6,7 @@ import morgan from 'morgan';
 import userRoutes from './routes/user.routes.js'
 import errorMiddleware from './middlewares/error.middleware.js';
 
-
+import upload from './middlewares/multer.middleware.js';
 
 const app = express();
 
@@ -20,6 +20,16 @@ app.use(cors({
 }));
 
 app.use(morgan('dev'));
+
+app.post('/upload', (req, res, next) => {
+    console.log('Middleware executed');
+    next();
+}, upload.single('avatar'), (req, res) => {
+  
+     console.log("reqfile",req.file);
+   
+    res.send('File uploaded');
+});
 
 
 

@@ -63,7 +63,7 @@ userSchema.methods = {
             email: this.email,
             subscription: this.subscription,
             role: this.role
-        }, process.env.JWT_SECRET, { expiresIn:  process.env.JWT_SECRET });
+        }, process.env.JWT_SECRET, { expiresIn:  process.env.JWT_EXPIRY });
     },
     comparePassword: async function(password){
         return await bcrypt.compare(password, this.password);
