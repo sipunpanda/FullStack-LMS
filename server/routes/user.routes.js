@@ -6,20 +6,22 @@ import {
     getProfile,
     forgotPassword,
     resetPassword,
-    updatePassword
+    updatePassword,
+    updateUser
 } from '../controllers/user.controller.js'
 import { isLoggedIn } from "../models/auth.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.post('/register',upload.single("avatar"), register);
+router.post('/register', upload.single("avatar"), register);
 router.post('/login', login);
 router.get('/logout', isLoggedIn, logout);
 router.get('/me', isLoggedIn, getProfile);
-router.post('/forgot-password',forgotPassword);
-router.post('/reset-password/:resetToken',resetPassword);
-router.post('/update-password',isLoggedIn,updatePassword);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password/:resetToken', resetPassword);
+router.post('/update-password', isLoggedIn, updatePassword);
+router.post('/update-user', isLoggedIn, upload.single("avatar"), updateUser);
 
 
 
