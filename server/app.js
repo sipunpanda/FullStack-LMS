@@ -13,6 +13,9 @@ const app = express();
 app.use(express.json());
 
 app.use(cookieParser());
+
+app.use(express.urlencoded({ extended: true })); // eslint-disable-line no-unused-vars global variable names and types //
+
 app.use(cors({
     origin: [process.env.FRONTEND_URL],
     credentials: true,
