@@ -1,5 +1,8 @@
 import User from '../models/user.model.js'
 import AppError from '../utils/appError.js'
+import cloudinary from 'cloudinary'
+import fs from 'fs/promises'
+
 
 
 const cookieOptions = {
@@ -13,41 +16,76 @@ const register = async (req, res, next) => {
     const { fullName, email, password } = req.body;
   
 
-
-    if (!fullName || !email || !password) {
-        return next(new AppError('All fields are required', 400))
-    }
-
-    const userExist = await User.findOne({ email });
-    if (userExist) {
-        return next(new AppError('Email already in use', 400))
-    }
-
-    const user = await User.create({
-        fullName,
-        email,
-        password,
-        avatar: {
-            public_id: email,
-            secure_url: 'https://res.cloudinary.com/your_cloud_name/image/upload/v1674647316/avatar_drzgxv.jpg', // replace with your cloudinary url
+try {
+    
+        if (!fullName || !email || !password) {
+            return next(new AppError('All fields are required', 400))
         }
-    });
-    if (!user) {
-        return next(new AppError('Failed to create user', 500))
-
+    
+        const userExist = await User.findOne({ email });
+        if (userExist) {
+            return next(new AppError('Email already in use', 400))
+        }
+    
+        const user = await User.create({
+            fullName,
+            email,
+            password,
+            avatar: {
+                public_id: email,
+                secure_url: 'https://res.cloudinary.com/your_cloud_name/image/upload/v1674647316/avatar_drzgxv.jpg', // replace with your cloudinary url
+            }
+        });
+        if (!user) {
+            return next(new AppError('Failed to create user', 500))
+    
+        }
+    
+        //Upload file to cloudinary
+    if(req.file){
+        try {
+            const result = await cloudinary.v2.uploader.upload(req.file.path, {
+                folder: 'lms', // save files in a folder named avatars
+                width: 250,
+                height: 250,
+                gravity: 'faces', // center the image around detected faces
+                crop: 'fill',
+    
+            });
+    
+      if (result) {
+          user.avatar = {
+                  public_id: result.public_id,
+                  secure_url: result.secure_url,
+              }
+      }
+            //Remove temporary files
+            fs.rm(`uploads/${req.file.filename}`)
+    await user.save();
+            
+        } catch (e) {
+            fs.rm(`uploads/${req.file.filename}`)
+            
+            return next(new AppError('Failed to upload avatar', 500))
+            
+        }
     }
-    user.password = undefined;
-
-    const token = await user.generateJWTToken();
-    res.cookie("token", token, cookieOptions);
-
-    res.status(201).json({
-        success: true,
-        message: 'User registered successfully',
-        user
-    })
-
-
+    
+        user.password = undefined;
+    
+        const token = await user.generateJWTToken();
+        res.cookie("token", token, cookieOptions);
+    
+        res.status(201).json({
+            success: true,
+            message: 'User registered successfully',
+            user
+        })
+    
+    
+} catch (e) {
+    return next(new AppError('Failed to Resister an User'));
+}
 };
 
 const login = async (req, res, next) => {
