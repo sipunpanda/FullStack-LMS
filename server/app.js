@@ -6,6 +6,8 @@ import morgan from 'morgan';
 import userRoutes from './routes/user.routes.js'
 import errorMiddleware from './middlewares/error.middleware.js';
 
+import courseRoutes from './routes/course.routes.js'
+
 import upload from './middlewares/multer.middleware.js';
 
 const app = express();
@@ -45,6 +47,7 @@ app.use('/ping', (req, res) => {
 })
 
 app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/course', courseRoutes)
 
 app.all('*', (req, res,next) => {
     res.status(404).json(

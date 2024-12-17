@@ -9,8 +9,8 @@ import {
     updatePassword,
     updateUser
 } from '../controllers/user.controller.js'
-import { isLoggedIn } from "../models/auth.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
+import { isLoggedIn } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
