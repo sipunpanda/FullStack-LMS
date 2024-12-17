@@ -1,51 +1,170 @@
 import Course from "../models/course.model.js"
 import AppError from "../utils/appError.js"
+import fs from 'fs/promises'
+import cloudinary from 'cloudinary'
 
 
 const getAllCourses = async (req, res, next) => {
-    try {    
-    const courses = await Course.find({}).select('-lectures')
+    try {
+        const courses = await Course.find({}).select('-lectures')
 
-    if(!courses){
-        return next(new AppError("No courses found", 404))  // If no courses are found, throw an error with status 404. 404 means not found. 400 means bad request. 401 means unauthorized. 403 means forbidden. 404 means not found. 410 means gone. 500 means server error.
-    }
-    
-    
-    res.status(200).json({
-        success: true,
-        message: "All courses",
-        courses
-     
-    })
+        if (!courses) {
+            return next(new AppError("No courses found", 404))  // If no courses are found, throw an error with status 404. 404 means not found. 400 means bad request. 401 means unauthorized. 403 means forbidden. 404 means not found. 410 means gone. 500 means server error.
+        }
+
+
+        res.status(200).json({
+            success: true,
+            message: "All courses",
+            courses
+
+        })
     } catch (e) {
         return next(new AppError("Unable to Fetch all courses", 400))
     }
 
 }
+
 const getLectureById = async (req, res, next) => {
-try {
-    const {id} = req.params;
-    
+    try {
+        const { id } = req.params;
 
-    const course = await Course.findById(id);
 
-    if(!course){
-        return next(new AppError("Course not found", 404))
+        const course = await Course.findById(id);
+
+        if (!course) {
+            return next(new AppError("Course not found", 404))
+        }
+        res.status(200).json({
+            success: true,
+            message: "Course lectures",
+            lectures: course.lectures
+        })
+
+    } catch (e) {
+        return next(new AppError("Unable to fetch course lectures", 400))
+
     }
-    res.status(200).json({
-        success: true,
-        message: "Course lectures",
-        lectures: course.lectures
-    })
-    
-} catch (e) {
-    return next(new AppError("Unable to fetch course lectures", 400))
-    
-}
 }
 
+const createCourse = async (req, res, next) => {
+    try {
+
+        const { title, description, category, createdBy } = req.body;
+        if (!title || !description || !category || !createdBy) {
+            return next(new AppError("All fields are required", 400))
+        }
+
+        const newCourse = await Course.create({
+            title,
+            description,
+            category,
+            createdBy,
+            thumbnail: {
+                public_id: 'Dummy Data',
+                secure_url: 'Dummy Data'
+            }
+        })
+
+        if (!newCourse) {
+            return next(new AppError("Unable to create course", 400))
+        }
+
+        if (req.file) {
+            const result = await cloudinary.v2.uploader.upload(req.file.path, {
+                folder: 'lms'
+            });
+
+            if (result) {
+                newCourse.thumbnail.public_id = result.public_id;
+                newCourse.thumbnail.secure_url = result.secure_url;
+            }
+            fs.rm(`uploads/${req.file.filename}`);
+        }
+        await newCourse.save();
+        res.status(201).json({
+            success: true,
+            message: "Course created successfully",
+            course: newCourse
+        })
+
+    } catch (e) {
+        return next(new AppError("Unable to create course", 400))
+
+    }
+
+}
+
+const updateCourse = async (req, res, next) => {
+    try {
+        const { id } = req.params; //test param id
+
+        if (!(await Course.findById(id))) {
+            return next(new AppError("Invalid Id, Active Id is required", 400))
+        }
+
+        const course = await Course.findByIdAndUpdate(
+            id,
+            {
+                $set: req.body
+            },
+            {
+                runValidators: true
+            }
+        );
+        if (!course) {
+            return next(new AppError("Unable to update course Id does not exist", 500))
+        }
+        res.status(200).json({
+            success: true,
+            message: "Course updated successfully",
+            course: course
+        }
+
+        );
+
+
+    } catch (e) {
+        return next(new AppError("Unable to update course", 400))
+
+
+    }
+
+}
+
+const deleteCourse = async (req, res, next) => {
+    try {
+        const { id } = req.params; //test param id
+
+        if (!(await Course.findById(id))) {
+            return next(new AppError("Invalid Id, Active Id is required", 400))
+        }
+        const course = await Course.findByIdAndDelete(id)
+        if (!course) {
+            return next(new AppError("Unable to delete course Id does not exist", 500))
+        }
+
+
+
+        res.status(200).json({
+            success: true,
+            message: "Course deleted successfully",
+            course: course
+        })
+
+
+
+
+    } catch (e) {
+        return next(new AppError(`Unable to delete course: ${e.message}`, 400))
+
+    }
+}
 
 export {
     getAllCourses,
-    getLectureById
+    getLectureById,
+    createCourse,
+    updateCourse,
+    deleteCourse
 }

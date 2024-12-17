@@ -20,7 +20,7 @@ const courseSchema = new Schema({
         required: [true, "Category is required"],
 
     },
-    thimbnail:{
+    thumbnail:{
         public_id: {
             type: String,
             required: [true, "Thimbnail is required"]

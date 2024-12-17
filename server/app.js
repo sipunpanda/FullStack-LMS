@@ -8,7 +8,7 @@ import errorMiddleware from './middlewares/error.middleware.js';
 
 import courseRoutes from './routes/course.routes.js'
 
-import upload from './middlewares/multer.middleware.js';
+
 
 const app = express();
 
@@ -26,15 +26,7 @@ app.use(cors({
 
 app.use(morgan('dev'));
 
-app.post('/upload', (req, res, next) => {
-    console.log('Middleware executed');
-    next();
-}, upload.single('avatar'), (req, res) => {
-  
-     console.log("reqfile",req.file);
-   
-    res.send('File uploaded');
-});
+
 
 
 

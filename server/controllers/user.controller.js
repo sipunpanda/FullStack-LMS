@@ -65,6 +65,12 @@ const register = async (req, res, next) => {
                 }
                 //Remove temporary files
                 fs.rm(`uploads/${req.file.filename}`)
+
+                //for extra data upload if available
+                if(req.body.role){
+                    user.role = req.body.role
+                }
+
                 await user.save();
 
             } catch (e) {
