@@ -69,17 +69,23 @@ const createCourse = async (req, res, next) => {
         if (!newCourse) {
             return next(new AppError("Unable to create course", 400))
         }
+        try {
 
-        if (req.file) {
-            const result = await cloudinary.v2.uploader.upload(req.file.path, {
-                folder: 'lms'
-            });
+            if (req.file) {
+                const result = await cloudinary.v2.uploader.upload(req.file.path, {
+                    folder: 'lms'
+                });
 
-            if (result) {
-                newCourse.thumbnail.public_id = result.public_id;
-                newCourse.thumbnail.secure_url = result.secure_url;
+                if (result) {
+                    newCourse.thumbnail.public_id = result.public_id;
+                    newCourse.thumbnail.secure_url = result.secure_url;
+                }
+                fs.rm(`uploads/${req.file.filename}`);
             }
+        } catch (e) {
             fs.rm(`uploads/${req.file.filename}`);
+            return next(new AppError(`Error uploading image: ${e.message}`, 400))
+
         }
         await newCourse.save();
         res.status(201).json({
@@ -161,10 +167,73 @@ const deleteCourse = async (req, res, next) => {
     }
 }
 
+const addLectureToCourseById = async (req, res, next) => {
+    try {
+        const { title, description } = req.body;
+        const { id } = req.params;
+        if (!title || !description) {
+            return next(new AppError("Title and Description are required", 400))
+        }
+        const course = await Course.findById(id);
+        if (!course) {
+            return next(new AppError("Course not found, Invalid id !", 404))
+        }
+
+        const lectureData = {
+            title,
+            description,
+            lecture: {}
+        };
+
+        try {
+            if (req.file) {
+
+                const result = await cloudinary.v2.uploader.upload(req.file.path, {
+                    folder: 'lms', // Save files in a folder named lms
+                    chunk_size: 50000000, // 50 mb size
+                    resource_type: 'video',
+                });
+                console.log("file print>>", req.file);
+
+
+                if (result) {
+
+                    lectureData.lecture.public_id = result.public_id;
+                    lectureData.lecture.secure_url = result.secure_url;
+                }
+                fs.rm(`uploads/${req.file.filename}`);
+            }
+
+        } catch (e) {
+            fs.rm(`uploads/${req.file.filename}`);
+            return next(new AppError(`Error uploading video: ${e}`, 400));
+
+        }
+
+        course.lectures.push(lectureData);
+        course.numbersOfLectures = course.lectures.length;
+        await course.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Lecture added successfully",
+            course: course
+        });
+
+
+    } catch (error) {
+        return next(new AppError("Unable to add lecture", 400));
+
+    }
+
+
+}
+
 export {
     getAllCourses,
     getLectureById,
     createCourse,
     updateCourse,
-    deleteCourse
+    deleteCourse,
+    addLectureToCourseById
 }
