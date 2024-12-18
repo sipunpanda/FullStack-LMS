@@ -43,7 +43,11 @@ const userSchema = new Schema({
         default: 'USER',
     },
     forgotPasswordToken: String,
-    forgotPasswordExpiryDate: Date
+    forgotPasswordExpiryDate: Date,
+    subscription:{
+        id: String,
+        status: String,
+    }
 
 }, {
     timestamps: true, // Add createdAt and updatedAt fields automatically
