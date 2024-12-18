@@ -229,11 +229,71 @@ const addLectureToCourseById = async (req, res, next) => {
 
 }
 
+
+const deleteLectureFromCourseById = async (req, res, next) => {
+    try {
+        // Get the  course data from the server and remove it from the database  
+        const { id, lectureId } = req.params;
+        if (!id || !lectureId) {
+            return next(new AppError("Id and Lecture Id are required", 400))
+        }
+        const course = await Course.findById(id);
+        if (!course) {
+            return next(new AppError("Course not found, Invalid id!", 404))
+
+        }
+        if (course.lectures.length === 0) {
+            return next(new AppError("No lectures found in this course", 404))
+
+        }
+        // Check if the lecture exists in the course
+        const lectureIndex = course.lectures.findIndex(lecture => lecture.id.toString() === lectureId);
+        if (lectureIndex === -1) {
+            return next(new AppError("Lecture not found in this course", 404))
+
+        }
+        // Delete the lecture from the course
+
+        // Delete the lecture from cloudinary
+       try {
+         await cloudinary.v2.uploader.destroy(
+             course.lectures[lectureIndex].lecture.public_id,
+             {
+                 resource_type: 'video',
+             }
+         );
+        } catch(error){
+             console.error(`Error deleting lecture from cloudinary: ${error}`);
+             return next(new AppError(`Error deleting lecture from cloudinary: ${error.message}`, 500));
+
+ 
+        }
+
+        // Remove the lecture from the array
+        course.lectures.splice(lectureIndex, 1);
+        // Update the number of lectures in the course document
+        course.numbersOfLectures = course.lectures.length;
+        await course.save();
+        res.status(200).json({
+            success: true,
+            message: "Lecture deleted successfully",
+            course: course
+        });
+
+    }
+    catch (error) {
+        return next(new AppError("Unable to delete lecture", 400));
+
+    }
+}
+
+
 export {
     getAllCourses,
     getLectureById,
     createCourse,
     updateCourse,
     deleteCourse,
-    addLectureToCourseById
+    addLectureToCourseById,
+    deleteLectureFromCourseById
 }
