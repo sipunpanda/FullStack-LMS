@@ -1,13 +1,101 @@
+import AppError from "../utils/appError.js";
+import User from '../models/user.model.js';
+import { razorpay } from "../server.js";
+import Payment from "../models/payment.model.js";
+
+import crypto from 'crypto';
+
+
+
+
+
+
 export const getRazorpayApiKey = async (req, res,next)=>{
+    res.status(200).json({
+        success: true,
+        message:"Razorpay API key",
+        apiKey: process.env.RAZORPAY_API_KEY
+    });
 
 }
 
 
 export const buySubscription = async (req, res,next)=>{
+    
+    try {
+        const {id} =req.user;
+        const user = await User.findById(id);
+        
+        
+        if(!user) return next(new AppError("Unauthorized, please login", 401));
+
+        if(user.role == 'ADMIN'){
+            return next(new AppError("Admin cannot purchase a subscription", 400));
+        }
+
+const subscription = await razorpay.subscriptions.create({
+    plan_id: process.env.RAZORPAY_PLAN_ID, // The unique plan ID
+    customer_notify:1
+});
+
+if(!subscription) return next(new AppError(" subscription is not available for subscription ", 404));
+
+// subscription is already in the subscription list and we can purchase it immediately 
+user.subscription.id = subscription.id;
+user.subscription.status = subscription.status;
+
+await user.save();
+
+res.status(200).json({
+    success: true,
+    message: "Successfully purchased a subscription",
+    subscription_id: subscription.id
+    });
+
+
+
+
+    } catch (e) {
+        next(new AppError("Failed to buy subscription", 500));
+    }
 
 }
 
 export const verifySubscription = async (req, res,next)=>{
+    const {id} = req.user
+    const {razorpay_payment_id, razorpay_signature, razorpay_subscription_id } = req.params.razorpay_payment_id
+
+    const user = await User.findById(id);
+    if(!user) return next(new AppError("Unauthorized, please login", 401));
+
+    const subscriptionId = user.subscription.id;
+
+    const generatedSignature = crypto
+    .createHmac('sha256', process.env.RAZORPAY_SECRET)
+    .update(`${razorpay_payment_id}|${subscriptionId}`)
+    .digest('hex');
+    
+    if(generatedSignature!== razorpay_signature) return next(new AppError("Invalid signature", 400));
+
+    const payment = await Payment.create({
+   razorpay_payment_id,
+        razorpay_signature,
+        razorpay_subscription_id
+
+    });
+
+    if(!payment) return next(new AppError("Unable to create payment", 400));
+
+    user.subscription.status = 'active';
+    await payment.save(); 
+    await user.save();
+    
+    res.status(200).json({
+        success: true,
+        message: "Payment verified successfully",
+        payment_id: payment.id
+    });
+
 
 }
 
