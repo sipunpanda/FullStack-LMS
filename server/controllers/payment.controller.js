@@ -68,12 +68,12 @@ export const buySubscription = async (req, res, next) => {
 
 export const verifySubscription = async (req, res, next) => {
     const { id } = req.user
-    const { razorpay_payment_id, razorpay_signature, razorpay_subscription_id } = req.params.razorpay_payment_id
+    const { razorpay_payment_id, razorpay_signature, razorpay_subscription_id } = req.params
 
     const user = await User.findById(id);
     if (!user) return next(new AppError("Unauthorized, please login", 401));
 
-    const subscriptionId = user.subscription.id;
+    const subscriptionId =  user.subscription.id;
 
     const generatedSignature = crypto
         .createHmac('sha256', process.env.RAZORPAY_SECRET)
