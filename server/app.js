@@ -30,7 +30,6 @@ app.use(morgan('dev'));
 
 
 
-
 app.use('/ping', (req, res) => {
     res.status(200).json(
         {

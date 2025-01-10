@@ -90,12 +90,16 @@ const role = useSelector((state) => state?.auth?.role)
                                 <li className="absolute bottom-4 w-[90%]">
 
                                 <div className="w-full flex items-center justify-center">
-                                    <button className='btn btn-primary btn-sm font-semibold rounded-md w-[50%]'>
-                                        <Link to="/login">Login </Link>
+                                        <Link to="/login">
+                                    <button className='btn btn-primary btn-sm font-semibold rounded-md w-[100%]'>
+                                        Login
                                     </button>
-                                    <button className="btn btn-secondary btn-sm font-semibold rounded-md w-[50%]">
-                                        <Link to="/signup"> Signup</Link>
+                                         </Link>
+                                        <Link to="/signup">
+                                    <button className="btn btn-secondary btn-sm font-semibold rounded-md w-[100%]">
+                                         Signup
                                     </button>
+                                         </Link>
                                 </div>
                                 </li>
                             )}
