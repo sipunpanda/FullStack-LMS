@@ -19,6 +19,7 @@ const cookieOptions = {
 const register = async (req, res, next) => {
     const { fullName, email, password } = req.body;
 
+console.log("here");
 
     try {
 
@@ -85,6 +86,7 @@ const register = async (req, res, next) => {
 
         const token = await user.generateJWTToken();
         res.cookie("token", token, cookieOptions);
+console.log("near to response");
 
         res.status(201).json({
             success: true,

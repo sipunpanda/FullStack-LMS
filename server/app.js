@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -9,7 +11,7 @@ import errorMiddleware from './middlewares/error.middleware.js';
 import courseRoutes from './routes/course.routes.js'
 import paymentRoutes from './routes/payment.routes.js'
 
-
+dotenv.config();
 
 const app = express();
 
@@ -17,7 +19,7 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.use(express.urlencoded({ extended: true })); // eslint-disable-line no-unused-vars global variable names and types //
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
     origin: [process.env.FRONTEND_URL],
@@ -26,8 +28,6 @@ app.use(cors({
 }));
 
 app.use(morgan('dev'));
-
-
 
 
 app.use('/ping', (req, res) => {

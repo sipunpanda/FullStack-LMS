@@ -75,10 +75,21 @@ function Signup() {
         formData.append('password', signupData.password);
         formData.append('fullName', signupData.fullName);
         formData.append('avatar', signupData.avatar);
+
+        // const payload = Json({
+        //     fullName: signupData.fullName,
+        //     email: signupData.email,
+        //     password: signupData.password,
+        //     avatar: signupData.avatar
+        // })
+
+
         
 
         // dispatch action to create new user
         const response = await dispatch(createAccount(formData));
+        // console.log("resp",response);
+        
         if(response?.payload?.success) {
             navigate("/")
         }
