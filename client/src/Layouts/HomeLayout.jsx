@@ -105,7 +105,7 @@ const role = useSelector((state) => state?.auth?.role)
                             )}
 
                             {isLoggedIn && (
-                                <li className="relative bottom-4 w-[90%]">
+                                <li className="absolute bottom-4 w-[90%]">
 
                                 <div className="w-full flex items-center justify-center">
                                     <button className='btn btn-primary btn-sm font-semibold rounded-md w-[50%]'>
