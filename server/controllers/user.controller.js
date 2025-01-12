@@ -19,20 +19,20 @@ const cookieOptions = {
 const register = async (req, res, next) => {
     const { fullName, email, password } = req.body;
 
-console.log("here");
 
     try {
 
-        if (!fullName || !email || !password) {
+        if (!fullName || !email || !password || !req.file) {
             return next(new AppError('All fields are required', 400))
         }
 
         const userExist = await User.findOne({ email });
         if (userExist) {
-            return next(new AppError('Email already in use', 400))
+            return next(new AppError('Email already in use', 420))
         }
 
         const user = await User.create({
+            
             fullName,
             email,
             password,
@@ -48,6 +48,7 @@ console.log("here");
 
         //Upload file to cloudinary
         if (req.file) {
+
             try {
                 const result = await cloudinary.v2.uploader.upload(req.file.path, {
                     folder: 'lms', // save files in a folder named avatars
@@ -86,7 +87,6 @@ console.log("here");
 
         const token = await user.generateJWTToken();
         res.cookie("token", token, cookieOptions);
-console.log("near to response");
 
         res.status(201).json({
             success: true,
@@ -145,7 +145,6 @@ const getProfile = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const user = await User.findById(userId);
-        console.log(user);
         
 
         if (!user) {
