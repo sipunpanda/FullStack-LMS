@@ -22,13 +22,13 @@ const register = async (req, res, next) => {
 
     try {
 
-        if (!fullName || !email || !password || !req.file) {
+        if (!fullName || !email || !password) {
             return next(new AppError('All fields are required', 400))
         }
 
         const userExist = await User.findOne({ email });
         if (userExist) {
-            return next(new AppError('Email already in use', 420))
+            return next(new AppError('Email already in use', 400))
         }
 
         const user = await User.create({
