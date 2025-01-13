@@ -83,7 +83,7 @@ export const logout = createAsyncThunk("/auth/logout", async () => {
             error: "Failed to logout"
         }
         );
-        toast.success( "Account Logout successfully");
+        // toast.success( "Account Logout successfully");
         return (await res).data;
     } catch (error) {
         // console.log("inlogout error",error);

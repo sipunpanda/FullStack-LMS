@@ -29,7 +29,7 @@ function Signup() {
     }
 
     function getImage(e) {
-        e.preventDefault();;
+        e.preventDefault();
         // get Image
         const uploadedImage = e.target.files[0];
 
@@ -70,16 +70,17 @@ function Signup() {
         }
         
 // send request to server
-        // const formData = new FormData();
-        // formData.append('email', signupData.email);
-        // formData.append('password', signupData.password);
-        // formData.append('fullName', signupData.fullName);
-        // formData.append('avatar', signupData.avatar);
+        const formData = new FormData();
+        formData.append('email', signupData.email);
+        formData.append('password', signupData.password);
+        formData.append('fullName', signupData.fullName);
+        formData.append('avatar', signupData.avatar);
         
 
         // dispatch action to create new user
-        // const response = await dispatch(createAccount(formData));
-        const response = await dispatch(createAccount(signupData));
+        const response = await dispatch(createAccount(formData));
+        //if i use  below line i may face issue while uploading file
+        // const response = await dispatch(createAccount(signupData));
         if(response?.payload?.success) {
             navigate("/")
         }
