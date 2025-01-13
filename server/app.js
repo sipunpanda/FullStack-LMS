@@ -10,6 +10,8 @@ import errorMiddleware from './middlewares/error.middleware.js';
 
 import courseRoutes from './routes/course.routes.js'
 import paymentRoutes from './routes/payment.routes.js'
+import miscRoutes from './routes/miscellaneous.routes.js';
+
 
 dotenv.config();
 
@@ -41,6 +43,8 @@ app.use('/ping', (req, res) => {
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/course', courseRoutes);
 app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1', miscRoutes);
+
 
 app.all('*', (req, res,next) => {
     res.status(404).json(
