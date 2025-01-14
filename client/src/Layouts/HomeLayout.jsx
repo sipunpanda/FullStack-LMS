@@ -74,9 +74,14 @@ const role = useSelector((state) => state?.auth?.role)
                             </li>
 
                                 {isLoggedIn && role === 'ADMIN' && (
-                                    <li>
+                                    <div>
+                                        <li>
                                         <Link to="/admin/dashboard">Admin Dashboard</Link>
                                     </li>
+                                    <li>
+                                        <Link to="/course/create">Create New Course</Link>
+                                    </li>
+                                    </div>
                                 )}
 
                             <li>

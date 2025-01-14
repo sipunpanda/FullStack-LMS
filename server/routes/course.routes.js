@@ -7,7 +7,8 @@ const router = Router();
 
 
 // Define routes
-router.get('/',isLoggedIn, authorizeSubscriber, getAllCourses)
+// router.get('/',isLoggedIn, authorizeSubscriber, getAllCourses)
+router.get('/',isLoggedIn, getAllCourses)
     .post('/', isLoggedIn, authorizedRole('ADMIN'), upload.single('thumbnail'), createCourse);
 
 router.get('/:id', isLoggedIn, authorizedRole('ADMIN'), getLectureById)
