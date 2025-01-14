@@ -158,7 +158,7 @@ export const changePassword = createAsyncThunk(
     "/user/update/profile",
     async (data) => {
       try {
-        let res = axiosInstance.put(`/user/update/${data[0]}`, data[1]);
+        let res = axiosInstance.post(`/user/update-user/${data[0]}`, data[1]);
   
         toast.promise(res, {
           loading: "Updating...",
