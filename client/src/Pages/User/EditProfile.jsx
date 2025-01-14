@@ -3,12 +3,13 @@ import { toast } from "react-hot-toast";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { BsPersonCircle } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getUserData, updateProfile } from "../../Redux/Slices/AuthSlice.js";
 import HomeLayout from "../../Layouts/HomeLayout";
 
 const EditProfile = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [previewImage, setImagePreview] = useState("");
 
   const [data, setData] = useState({
@@ -73,6 +74,8 @@ const EditProfile = () => {
     // fetching the data to update
     await dispatch(getUserData());
   };
+
+  navigate("/user/profile")
 
   return (
     <HomeLayout>

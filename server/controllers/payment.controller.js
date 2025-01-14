@@ -14,7 +14,7 @@ export const getRazorpayApiKey = async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: "Razorpay API key",
-        apiKey: process.env.RAZORPAY_API_KEY
+        apiKey: process.env.RAZORPAY_SECRET
     });
 
 }
@@ -32,7 +32,7 @@ export const buySubscription = async (req, res, next) => {
         if (user.role == 'ADMIN') {
             return next(new AppError("Admin cannot purchase a subscription", 400));
         }
-
+        
         const subscription = await razorpay.subscriptions.create({
             plan_id: process.env.RAZORPAY_PLAN_ID,
             customer_notify: 1,
