@@ -11,10 +11,11 @@ import crypto from 'crypto';
 
 
 export const getRazorpayApiKey = async (req, res, next) => {
+   
     res.status(200).json({
         success: true,
         message: "Razorpay API key",
-        apiKey: process.env.RAZORPAY_SECRET
+        apiKey: process.env.RAZORPAY_KEY_ID
     });
 
 }
@@ -23,12 +24,13 @@ export const getRazorpayApiKey = async (req, res, next) => {
 export const buySubscription = async (req, res, next) => {
 
     try {
+        
         const { id } = req.user;
         const user = await User.findById(id);
-
-
+        
+        
         if (!user) return next(new AppError("Unauthorized, please login", 401));
-
+        
         if (user.role == 'ADMIN') {
             return next(new AppError("Admin cannot purchase a subscription", 400));
         }
@@ -38,7 +40,8 @@ export const buySubscription = async (req, res, next) => {
             customer_notify: 1,
             total_count: 12,
         });
-
+        
+        
         console.log("subscription created", subscription);
         
 
@@ -47,9 +50,10 @@ export const buySubscription = async (req, res, next) => {
         // subscription is already in the subscription list and we can purchase it immediately 
         user.subscription.id = subscription.id;
         user.subscription.status = subscription.status;
-
+        
         await user.save();
-
+        
+        console.log("in payment contriloller");
         res.status(200).json({
             success: true,
             message: "Successfully purchased a subscription",
@@ -149,6 +153,7 @@ export const cancelSubscription = async (req, res, next) => {
 export const getAllPayments = async (req, res, next) => {
     try {
         const { count } = req.query;
+        console.log("heeeeee");
         
 
         const subscriptions = await razorpay.subscriptions.all({

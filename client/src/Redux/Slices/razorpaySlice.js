@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-hot-toast";
-import axiosInstance from "../Helper/axiosInstance";
+import axiosInstance from "../../Helpers/axiosInstance";
 
 const initialState = {
   key: "",
@@ -39,7 +39,7 @@ export const verifyUserPayment = createAsyncThunk(
   "/verifyPayment",
   async (paymentDetail) => {
     try {
-      const res = await axiosInstance.post("/payments/verify-subscription", {
+      const res = await axiosInstance.post("/payments/verify", {
         razorpay_payment_id: paymentDetail.razorpay_payment_id,
         razorpay_subscription_id: paymentDetail.razorpay_subscription_id,
         razorpay_signature: paymentDetail.razorpay_signature,
@@ -99,7 +99,7 @@ const razorpaySlice = createSlice({
         toast.error("Failed to get razor pay id");
       })
       .addCase(getRazorPayId.fulfilled, (state, action) => {
-        state.key = action?.payload?.key;
+        state.key = action?.payload?.apiKey;
       })
       .addCase(purchaseCourseBundle.fulfilled, (state, action) => {
         state.subscription_id = action?.payload?.subscription_id;

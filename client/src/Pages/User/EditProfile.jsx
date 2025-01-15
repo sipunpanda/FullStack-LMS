@@ -69,13 +69,23 @@ const EditProfile = () => {
     const newUserData = [data.userID, formData];
 
     // dispatching the api call using the thunk
-    await dispatch(updateProfile(newUserData));
+    const response = await dispatch(updateProfile(newUserData));
 
-    // fetching the data to update
+    // check if the API call was successful
+  if (response.meta.requestStatus === "fulfilled") {
+    // fetching the updated user data
     await dispatch(getUserData());
+    // navigate to the profile page
+    navigate("/user/profile");
+  } else {
+    // handle error
+    toast.error("Failed to update profile. Please try again.");
+   
+  }
+
   };
 
-  navigate("/user/profile")
+ 
 
   return (
     <HomeLayout>
