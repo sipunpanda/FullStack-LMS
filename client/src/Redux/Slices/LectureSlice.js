@@ -37,13 +37,15 @@ export const addCourseLecture = createAsyncThunk(
     formData.append("description", data.description);
 
     try {
-      const res = axiosInstance.post(`/course/${data.id}`, formData);
+      console.log("in progress");
+      
+      const res = await axiosInstance.post(`/course/${data.id}`, formData);
 
-      toast.promise(res, {
-        loading: "Adding the lecture...",
-        success: "Lecture added successfully",
-        error: "Failed to add lecture",
-      });
+      // await toast.promise(res, {
+      //   loading: "Adding the lecture...",
+      //   success: "Lecture added successfully",
+      //   error: "Failed to add lecture",
+      // });
 
       const response = await res;
 

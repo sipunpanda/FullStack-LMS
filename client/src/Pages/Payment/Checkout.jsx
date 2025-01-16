@@ -5,7 +5,7 @@ import {
     getRazorPayId,
     purchaseCourseBundle,
     verifyUserPayment,
-} from "../../Redux/Slices/razorpaySlice";
+} from "../../Redux/Slices/RazorpaySlice";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import HomeLayout from "../../Layouts/HomeLayout";
