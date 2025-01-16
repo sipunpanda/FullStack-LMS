@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import  {getUserData} from "../../Redux/Slices/AuthSlice.js";
+import { getUserData } from "../../Redux/Slices/AuthSlice.js";
+import { cancelCourseBundle } from "../../Redux/Slices/RazorpaySlice.js";
 import HomeLayout from "../../Layouts/HomeLayout";
-// import { cancelCourseBundle } from "../../Redux/razorpaySlice";
 
 const Profile = () => {
   const dispatch = useDispatch();
