@@ -1,5 +1,5 @@
 import './App.css'
-import {Routes, Route} from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import HomePage from './Pages/HomePage.jsx'
 import AboutUs from './Pages/AboutUs.jsx'
 import NotFound from './Pages/NotFound.jsx'
@@ -24,41 +24,41 @@ function App() {
 
   return (
     <>
-   <Routes>
-    <Route path='/' element ={<HomePage /> } > </Route>
-    <Route path='/about' element ={<AboutUs /> } > </Route>
-    <Route path='/courses' element ={<CourseList /> } > </Route>
-    <Route path='/courses/description' element ={<CourseDescription /> } > </Route>
-    <Route path='/contact' element ={<Contact /> } > </Route>
-    <Route path='/denied' element ={<Denied /> } > </Route>
-    <Route path='/signup' element ={<Signup /> } > </Route>
-    <Route path='/login' element ={<Login /> } > </Route>
+      <Routes>
+        <Route path='/' element={<HomePage />} > </Route>
+        <Route path='/about' element={<AboutUs />} > </Route>
+        <Route path='/courses' element={<CourseList />} > </Route>
+        <Route path='/courses/description' element={<CourseDescription />} > </Route>
+        <Route path='/contact' element={<Contact />} > </Route>
+        <Route path='/denied' element={<Denied />} > </Route>
+        <Route path='/signup' element={<Signup />} > </Route>
+        <Route path='/login' element={<Login />} > </Route>
 
 
 
-    <Route  element ={<RequireAuth  allowedRoles={["ADMIN"]} /> } >
-    <Route path='/course/create' element ={<CreateCourse /> } > </Route>
-    <Route path='/course/addlecture' element ={<AddLecture /> } > </Route>
-    <Route path='/admin/dashboard' element ={<AdminDashboard /> } > </Route>
-
-    
-     </Route>
-
-    <Route  element ={<RequireAuth allowedRoles={["ADMIN","USER"]} /> } >
-    <Route path='/user/profile' element ={<Profile />} > </Route>
-    <Route path='/user/editprofile' element ={<EditProfile />} > </Route>
-    <Route path='/checkout' element ={<Checkout/>} > </Route>
-    <Route path='/checkout/success' element ={<CheckoutSuccess/>} > </Route>
-    <Route path='/checkout/fail' element ={<CheckoutFail/>} > </Route>
-    <Route path='/course/displaylectures' element ={<DisplayLectures/>} > </Route>
-
-    
-     </Route>
+        <Route element={<RequireAuth allowedRoles={["ADMIN"]} />} >
+          <Route path='/course/create' element={<CreateCourse />} > </Route>
+          <Route path='/course/addlecture' element={<AddLecture />} > </Route>
+          <Route path='/admin/dashboard' element={<AdminDashboard />} > </Route>
 
 
+        </Route>
 
-    <Route path='*' element ={<NotFound />} > </Route>
-    </Routes>
+        <Route element={<RequireAuth allowedRoles={["ADMIN", "USER"]} />} >
+          <Route path='/user/profile' element={<Profile />} > </Route>
+          <Route path='/user/editprofile' element={<EditProfile />} > </Route>
+          <Route path='/checkout' element={<Checkout />} > </Route>
+          <Route path='/checkout/success' element={<CheckoutSuccess />} > </Route>
+          <Route path='/checkout/fail' element={<CheckoutFail />} > </Route>
+          <Route path='/course/displaylectures' element={<DisplayLectures />} > </Route>
+
+
+        </Route>
+
+
+
+        <Route path='*' element={<NotFound />} > </Route>
+      </Routes>
     </>
   )
 }

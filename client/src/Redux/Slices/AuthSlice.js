@@ -5,8 +5,9 @@ import axiosInstance from '../../Helpers/axiosInstance.js';
 const initialState = {
     isLoggedIn: localStorage.getItem('isLoggedIn') || false,
     role: localStorage.getItem('role') || "",
-    data:   JSON.parse(localStorage.getItem('data')) || {}
-    // data:   JSON.parse(localStorage.getItem('data')) || {}
+    data: localStorage.getItem("data") && localStorage.getItem("data") !== "undefined" 
+    ? JSON.parse(localStorage.getItem("data")) 
+    : {},    // data:   JSON.parse(localStorage.getItem('data')) || {}
 };
 
 export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
@@ -39,7 +40,7 @@ export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
 })
 
 
-export const login = createAsyncThunk("/auth/login", async (data) => {
+export const login = createAsyncThunk("/auth/login", async (data,  { rejectWithValue }) => {
     try {
         // console.log("hi",data);
        
@@ -47,10 +48,10 @@ export const login = createAsyncThunk("/auth/login", async (data) => {
         const res =  axiosInstance.post('user/login', data);
         // console.log("hi2",res);
         await toast.promise(
-            res, {
+          res, {
             loading: "Wait authentication in progress...",
             success: (data) => {
-                // console.log("data",data);
+                console.log("data",data);
                 
                 return data?.data?.message;
             },
@@ -60,9 +61,12 @@ export const login = createAsyncThunk("/auth/login", async (data) => {
         // toast.success( "Account successfully logged in");
         return (await res).data;
     } catch (error) {
-        toast.error(error?.response?.data?.message)
+        toast.error(error?.response?.data?.message);
+        return rejectWithValue(error?.response?.data);
     }
 });
+
+
 
 export const logout = createAsyncThunk("/auth/logout", async () => { 
     // console.log("inlogout1");
@@ -98,7 +102,9 @@ export const logout = createAsyncThunk("/auth/logout", async () => {
 // function to fetch user data
 export const getUserData = createAsyncThunk("/user/details", async () => {
     try {
-      const res = await axiosInstance.get("/user/me");
+      console.log("hi");
+      const res = await axiosInstance.get('/user/me');
+      
       return res?.data;
     } catch (error) {
       toast.error(error.message);
@@ -207,12 +213,13 @@ const authSlice = createSlice({
     reducers: {},
     extraReducers:(builder) =>{
         builder
-        .addCase(login.fulfilled, (state, action) =>{
+        .addCase(login.fulfilled, (state, action) =>{          
             localStorage.setItem("data", JSON.stringify(action?.payload?.user));
             localStorage.setItem("isLoggedIn", true);
-            localStorage.setItem("role", action?.payload?.user?.role);
+            localStorage.setItem("role", action?.payload?.user);
             state.data = action?.payload?.user;
             state.isLoggedIn = true;
+            state.role = action?.payload?.user?.role;
         })
         .addCase(logout.fulfilled, (state, action) => {
             localStorage.clear();
