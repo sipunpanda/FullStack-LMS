@@ -4,43 +4,34 @@ import HomeLayout from "../../Layouts/HomeLayout";
 import { useEffect } from "react";
 import CourseCard from "../../Components/CourseCard";
 
-function CourseList(){
-const dispatch = useDispatch();
+function CourseList() {
+    const dispatch = useDispatch();
+    const { courseData } = useSelector((state) => state.course);
 
-const {courseData} = useSelector((state) => state.course);
+    useEffect(() => {
+        dispatch(getAllCourses());
+    }, [dispatch]);
 
-console.log("courseData", courseData);
-
-
-async function loadCourses(){
-    await dispatch(getAllCourses());
-
-}
-
-useEffect(() => {
-    loadCourses();
-}, []);
-    return(
-        <>
+    return (
         <HomeLayout>
-            <div className="min-h-[90vh] pt-20 pl-20 flex flex-col gap-10 text-white">
-                <h1 className="text-3xl text-center font-semibold mb-5">
-                    Explore the Courses made by
-                    <span className="font-bold text-yellow-500">
-                        Industry Exports
-                    </span>
-                        </h1>
-                    <div className="mb-10 flex flex-wrap gap-14">
-                        {
-                            courseData?.map((element)=>{
-                                return <CourseCard key={element._id} data={element} />
-                            })
-                        }
+            <div className="min-h-[90vh] pt-16 px-4 md:px-10 lg:px-20 flex flex-col items-center text-white">
+                {/* Heading */}
+                <h1 className="text-2xl md:text-3xl text-center font-semibold mb-5">
+                    Explore the Courses made by{" "}
+                    <span className="font-bold text-yellow-500">Industry Experts</span>
+                </h1>
+
+                {/* Centered Course Grid */}
+                <div className="w-full max-w-7xl flex justify-center mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
+                        {courseData?.map((element) => (
+                            <CourseCard key={element._id} data={element} />
+                        ))}
                     </div>
+                </div>
             </div>
         </HomeLayout>
-        </>
-    )
+    );
 }
 
 export default CourseList;

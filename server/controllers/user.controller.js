@@ -13,6 +13,7 @@ const cookieOptions = {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production' ? true : false,
+    sameSite: "None",// for deplo online active this line
 }
 
 
@@ -21,7 +22,7 @@ const register = async (req, res, next) => {
 
 
     try {
-console.log("here");
+
 
         if (!fullName || !email || !password || !req.file) {
             return next(new AppError('All fields are required', 400))
@@ -268,7 +269,7 @@ const updatePassword = async (req, res, next) => {
         }
 
 
-        // user.password = newPassword
+        user.password = newPassword
 
         await user.save();
 

@@ -15,14 +15,14 @@ export const getAllCourses = createAsyncThunk("/course/get", async ()=>{
             loading: "Loading courses...",
             success: "Courses retrieved successfully",
             error: (error) => {
-                console.log(error);
+                // console.log(error);
                 throw new Error("Failed to load courses");
             }
         }
         )
         return (await response).data.courses;
     }catch(error){
-        toast.error(error?.response?.data?.message);
+        toast.error((error?.response?.data?.message) || "Please Login" );
     }
  });
 
@@ -33,24 +33,25 @@ export const getAllCourses = createAsyncThunk("/course/get", async ()=>{
 export const createNewCourse = createAsyncThunk(
     "/get/course",
     async (data) => {
+      // creating the form data from user data
+      
       try {
-        // creating the form data from user data
         let formData = new FormData();
         formData.append("title", data?.title);
         formData.append("description", data?.description);
         formData.append("category", data?.category);
         formData.append("createdBy", data?.createdBy);
         formData.append("thumbnail", data?.thumbnail);
-  
         const res = axiosInstance.post("/course", formData);
   
-        toast.promise(res, {
+       await toast.promise(res, {
           loading: "Creating the course...",
           success: "Course created successfully",
           error: "Failed to create course",
         });
   
         const response = await res;
+        
         return response.data;
       } catch (error) {
         toast.error(error?.response?.data?.message);
@@ -121,11 +122,13 @@ const courseSlice = createSlice({
     reducers:{},
     extraReducers: (builder)=>{
         builder.addCase(getAllCourses.fulfilled, (state, action)=>{
+          
             if(action.payload){
-                state.courseData = [...action.payload]
+                              state.courseData = [...action.payload]
             }
         })
     }
 });
+
 
 export default courseSlice.reducer;

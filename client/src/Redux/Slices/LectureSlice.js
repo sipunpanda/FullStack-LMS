@@ -31,26 +31,26 @@ export const getCourseLecture = createAsyncThunk(
 export const addCourseLecture = createAsyncThunk(
   "/course/lecture/add",
   async (data) => {
-    const formData = new FormData();
-    formData.append("lecture", data.lecture);
-    formData.append("title", data.title);
-    formData.append("description", data.description);
-
+    
     try {
-      console.log("in progress");
+      let formData = new FormData();
+      formData.append("lectureThumbnail", data.lecture);
+      formData.append("title", data.title);
+      formData.append("description", data.description);
       
-      const res = await axiosInstance.post(`/course/${data.id}`, formData);
+      const res =  axiosInstance.post(`/course/${data.id}`, formData);
 
-      // await toast.promise(res, {
-      //   loading: "Adding the lecture...",
-      //   success: "Lecture added successfully",
-      //   error: "Failed to add lecture",
-      // });
+      await toast.promise(res, {
+        loading: "Adding the lecture...",
+        success: "Lecture added successfully",
+        error: "Failed to add lecture",
+      });
 
       const response = await res;
 
       return response.data;
     } catch (error) {
+      
       toast.error(error?.response?.data?.message);
     }
   }
@@ -60,13 +60,12 @@ export const addCourseLecture = createAsyncThunk(
 export const deleteCourseLecture = createAsyncThunk(
   "/course/lecture/delete",
   async (data) => {
-    console.log(data);
     try {
       const res = axiosInstance.delete(
-        `/course/?courseId=${data.courseId}&lectureId=${data.lectureId}`
+        `/course/${data.courseId}/lectures/${data.lectureId}`
       );
 
-      toast.promise(res, {
+      await toast.promise(res, {
         loading: "Deleting the lecture...",
         success: "Lecture deleted successfully",
         error: "Failed to delete lecture",
@@ -75,6 +74,7 @@ export const deleteCourseLecture = createAsyncThunk(
       const response = await res;
       return response.data;
     } catch (error) {
+      
       toast.error(error?.response?.data?.message);
     }
   }

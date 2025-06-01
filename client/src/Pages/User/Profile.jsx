@@ -7,57 +7,67 @@ import HomeLayout from "../../Layouts/HomeLayout";
 
 const Profile = () => {
   const dispatch = useDispatch();
-
   const userData = useSelector((state) => state?.auth?.data);
 
-  // function to handle the cancel subscription of course
+  // Cancel subscription handler
   const handleCourseCancelSubscription = async () => {
     await dispatch(cancelCourseBundle());
     await dispatch(getUserData());
   };
 
   useEffect(() => {
-    // getting user details
     dispatch(getUserData());
   }, []);
+
   return (
     <HomeLayout>
-      <div className="min-h-[90vh] flex items-center justify-center">
-        <div className="my-10 flex flex-col gap-4 rounded-lg p-4 text-white w-90 shadow-[0_0_10px_black]">
-          <img
-            className="w-40 m-auto rounded-full border border-black"
-            src={userData?.avatar?.secure_url}
-            alt="user profile image"
-          />
+      <div className="min-h-[90vh] flex items-center justify-center bg-gray-900">
+        <div className="my-10 flex flex-col gap-6 rounded-lg p-6 text-white w-fit shadow-lg bg-gray-800 transition-all duration-300 hover:shadow-xl">
+          {/* Profile Image */}
+          <div className="flex flex-col items-center">
+            <img
+              className="w-32 h-32 rounded-full border-4 border-yellow-500 shadow-md"
+              src={userData?.avatar?.secure_url}
+              alt="user profile"
+            />
+            <h3 className="text-2xl font-semibold mt-3 capitalize">
+              {userData?.fullName}
+            </h3>
+          </div>
 
-          <h3 className="text-xl font-semibold text-center capitalize">
-            {userData.fullName}
-          </h3>
+          {/* User Details */}
+          <div className="grid grid-cols-2 gap-2 text-lg">
+            <p className="text-gray-400">Email :</p>
+            <p className="text-yellow-400">{userData?.email}</p>
 
-          <div className="grid grid-cols-2">
-            <p>Email :</p>
-            <p>{userData?.email}</p>
-            <p>Role :</p>
-            <p>{userData?.role}</p>
-            <p>Subscription :</p>
-            <p>
+            <p className="text-gray-400">Role :</p>
+            <p className="text-yellow-400 capitalize">{userData?.role}</p>
+
+            <p className="text-gray-400">Subscription :</p>
+            <p
+              className={`font-semibold ${
+                userData?.subscription?.status === "active"
+                  ? "text-green-400"
+                  : "text-red-400"
+              }`}
+            >
               {userData?.subscription?.status === "active"
                 ? "Active"
                 : "Inactive"}
             </p>
           </div>
 
-          {/* button to change the password */}
-          <div className="flex items-center justify-between gap-2">
+          {/* Action Buttons */}
+          <div className="flex items-center justify-between gap-3">
             <Link
               to={
                 userData?.email === "test@gmail.com"
                   ? "/denied"
-                  : "/changepassword"
+                  : "/user/changepassword"
               }
-              className="w-1/2 bg-yellow-600 hover:bg-yellow-700 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center"
+              className="w-1/2 bg-yellow-500 hover:bg-yellow-600 transition-all duration-300 rounded-md py-2 font-semibold text-center shadow-md"
             >
-              <button>Change Password</button>
+              Change Password
             </Link>
 
             <Link
@@ -66,16 +76,17 @@ const Profile = () => {
                   ? "/denied"
                   : "/user/editprofile"
               }
-              className="w-1/2 border border-yellow-600 hover:border-yellow-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center"
+              className="w-1/2 border border-yellow-500 text-yellow-500 hover:border-yellow-400 hover:text-yellow-400 transition-all duration-300 rounded-md py-2 font-semibold text-center shadow-md"
             >
-              <button>Edit Profile</button>
+              Edit Profile
             </Link>
           </div>
 
+          {/* Cancel Subscription Button */}
           {userData?.subscription?.status === "active" && (
             <button
               onClick={handleCourseCancelSubscription}
-              className="w-full bg-red-600 hover:bg-red-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center"
+              className="w-full bg-red-600 hover:bg-red-500 transition-all duration-300 rounded-md py-2 font-semibold text-center shadow-md"
             >
               Cancel Subscription
             </button>
